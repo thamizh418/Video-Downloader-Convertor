@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Video Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        label, input, button {
+            margin: 10px 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Video Converter</h1>
+    <form id="convertForm" enctype="multipart/form-data" method="post">
+        <label for="inputFile">Input File:</label>
+        <input type="file" id="inputFile" name="inputFile" required>
+        <button type="submit">Convert to MP4</button>
+    </form>
+    <pre id="response"></pre>
+
+    <script>
+        document.getElementById('convertForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData();
+            const fileInput = document.getElementById('inputFile');
+            if (fileInput.files.length === 0) {
+                document.getElementById('response').innerText = 'Please select a file.';
+                return;
+            }
+            formData.append('file', fileInput.files[0]);
+
+            fetch('http://localhost:8080/convert/toMp4', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('response').innerText = data;
+                })
+                .catch(error => {
+                    document.getElementById('response').innerText = 'Error: ' + error;
+                });
+        });
+    </script>
+</body>
+</html>
